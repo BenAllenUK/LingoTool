@@ -1,0 +1,17 @@
+{
+    "name" : "LingoTool Exporter",
+    "identifier" : "info.benallen.lingotool.exporter",
+    "version" : "0.1.0",
+    "description" : "LingoTool Exporter plugin",
+    "authorEmail" : "me@benallen.info",
+    "author" : "Ben Allen",
+    "commands" : [
+    {
+      "script" : "exporter-main.js",
+      "handler" : "onRun",
+      "shortcut" : "",
+      "name" : "LingoTool Exporter",
+      "identifier" : "lingotool-exporter"
+    }
+  ]
+}
