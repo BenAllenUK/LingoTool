@@ -9,7 +9,7 @@
     {
       "script" : "exporter-main.js",
       "handler" : "onRun",
-      "shortcut" : "",
+      "shortcut" : "ctrl shift i",
       "name" : "LingoTool Exporter",
       "identifier" : "lingotool-exporter"
     }
