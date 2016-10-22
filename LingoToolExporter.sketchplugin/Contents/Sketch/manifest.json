@@ -1,5 +1,5 @@
 {
-    "name" : "LingoTool Exporter",
+    "name" : "LingoToolExporter",
     "identifier" : "info.benallen.lingotool.exporter",
     "version" : "0.1.0",
     "description" : "LingoTool Exporter plugin",
@@ -7,25 +7,25 @@
     "author" : "Ben Allen",
     "menu" : {
       "items" : [
-        "lingotool-exporter",
-        "example_script"
+        "exporter-main",
+        "exporter-config"
       ],
       "title" : "LingoTool"
     },
     "commands" : [
       {
-        "script" : "example_script.cocoascript",
+        "script" : "exporter-config.cocoascript",
         "handler" : "onRun",
         "shortcut" : "ctrl cmd u",
-        "name" : "Sketch Nib UI Example",
-        "identifier" : "example_script"
+        "name" : "Configure",
+        "identifier" : "exporter-config"
       },
     {
       "script" : "exporter-main.js",
       "handler" : "onRun",
       "shortcut" : "ctrl shift i",
       "name" : "Export",
-      "identifier" : "lingotool-exporter"
+      "identifier" : "exporter-main"
     }
   ]
 }

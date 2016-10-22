@@ -1,0 +1,299 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="10117" systemVersion="15A284" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="10117"/>
+    </dependencies>
+    <objects>
+        <customObject id="-2" userLabel="File's Owner" customClass="DummyNibOwner">
+            <connections>
+                <outlet property="enterpriseHostName" destination="F40-uW-xod" id="hb5-qd-dZr"/>
+                <outlet property="masterCurrentConfigurationButton" destination="2Xy-YG-M3G" id="D2P-Ry-7Aw"/>
+            </connections>
+        </customObject>
+        <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
+        <customObject id="-3" userLabel="Application" customClass="NSObject"/>
+        <customView id="xM0-HM-hlc">
+            <rect key="frame" x="0.0" y="0.0" width="399" height="536"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+            <subviews>
+                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="DMy-a4-M6n">
+                    <rect key="frame" x="18" y="504" width="148" height="17"/>
+                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Current Configuration:" id="nDE-2b-Qqp">
+                        <font key="font" metaFont="system"/>
+                        <color key="textColor" name="scrollBarColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
+                <tabView fixedFrame="YES" initialItem="3KM-v8-Dcz" translatesAutoresizingMaskIntoConstraints="NO" id="sgX-iS-fIm">
+                    <rect key="frame" x="3" y="-10" width="393" height="437"/>
+                    <font key="font" metaFont="system"/>
+                    <tabViewItems>
+                        <tabViewItem label="Lingo Shared" identifier="1" id="3KM-v8-Dcz">
+                            <view key="view" id="7mr-Au-sJN">
+                                <rect key="frame" x="10" y="33" width="373" height="391"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                <subviews>
+                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Rf3-bW-lUx">
+                                        <rect key="frame" x="15" y="338" width="332" height="50"/>
+                                        <textFieldCell key="cell" sendsActionOnEndEditing="YES" title="Use the Lingo Shared platform and community translators to translate your app." id="VAR-Wu-o10">
+                                            <font key="font" metaFont="system"/>
+                                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                        </textFieldCell>
+                                    </textField>
+                                    <slider verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="TyM-Sa-jry">
+                                        <rect key="frame" x="15" y="286" width="332" height="21"/>
+                                        <sliderCell key="cell" state="on" alignment="left" maxValue="100" doubleValue="50" tickMarkPosition="above" sliderType="linear" id="1EN-uq-tz7"/>
+                                    </slider>
+                                    <slider verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="abQ-rn-oFk">
+                                        <rect key="frame" x="15" y="233" width="332" height="21"/>
+                                        <sliderCell key="cell" state="on" alignment="left" maxValue="100" doubleValue="50" tickMarkPosition="above" sliderType="linear" id="ZIY-df-yql"/>
+                                    </slider>
+                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="pkF-Sh-Y7K">
+                                        <rect key="frame" x="16" y="255" width="166" height="17"/>
+                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="left" title="I want my translations in:" id="RRp-Az-0zh">
+                                            <font key="font" metaFont="system"/>
+                                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                        </textFieldCell>
+                                    </textField>
+                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="H1W-Hg-g4O">
+                                        <rect key="frame" x="16" y="308" width="233" height="17"/>
+                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="left" title="I'm willing to pay a maximum of:" id="wSM-LV-1vk">
+                                            <font key="font" metaFont="system"/>
+                                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                        </textFieldCell>
+                                    </textField>
+                                    <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="xwU-Dg-f29">
+                                        <rect key="frame" x="15" y="173" width="81" height="18"/>
+                                        <buttonCell key="cell" type="check" title="English" bezelStyle="regularSquare" imagePosition="left" inset="2" id="5tk-Bc-JLl">
+                                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                            <font key="font" metaFont="system"/>
+                                        </buttonCell>
+                                    </button>
+                                    <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="wOZ-qT-Ni6">
+                                        <rect key="frame" x="15" y="153" width="81" height="18"/>
+                                        <buttonCell key="cell" type="check" title="French" bezelStyle="regularSquare" imagePosition="left" inset="2" id="kEa-KT-VW6">
+                                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                            <font key="font" metaFont="system"/>
+                                        </buttonCell>
+                                    </button>
+                                    <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="NZJ-E2-jk4">
+                                        <rect key="frame" x="15" y="133" width="81" height="18"/>
+                                        <buttonCell key="cell" type="check" title="Spanish" bezelStyle="regularSquare" imagePosition="left" inset="2" id="9oX-SB-Wab">
+                                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                            <font key="font" metaFont="system"/>
+                                        </buttonCell>
+                                    </button>
+                                    <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="zo8-Wo-peC">
+                                        <rect key="frame" x="98" y="173" width="81" height="18"/>
+                                        <buttonCell key="cell" type="check" title="German" bezelStyle="regularSquare" imagePosition="left" inset="2" id="rpL-vA-fbn">
+                                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                            <font key="font" metaFont="system"/>
+                                        </buttonCell>
+                                    </button>
+                                    <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ozl-pe-h4e">
+                                        <rect key="frame" x="98" y="153" width="81" height="18"/>
+                                        <buttonCell key="cell" type="check" title="Dutch" bezelStyle="regularSquare" imagePosition="left" inset="2" id="Ymh-fh-Qd0">
+                                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                            <font key="font" metaFont="system"/>
+                                        </buttonCell>
+                                    </button>
+                                    <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="S3A-hy-STd">
+                                        <rect key="frame" x="98" y="133" width="81" height="18"/>
+                                        <buttonCell key="cell" type="check" title="Italian" bezelStyle="regularSquare" imagePosition="left" inset="2" id="YiI-Qa-GFV">
+                                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                            <font key="font" metaFont="system"/>
+                                        </buttonCell>
+                                    </button>
+                                    <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="NRy-jU-T6U">
+                                        <rect key="frame" x="183" y="173" width="81" height="18"/>
+                                        <buttonCell key="cell" type="check" title="Chinese" bezelStyle="regularSquare" imagePosition="left" inset="2" id="gcX-TT-0DI">
+                                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                            <font key="font" metaFont="system"/>
+                                        </buttonCell>
+                                    </button>
+                                    <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Vbm-40-ceN">
+                                        <rect key="frame" x="183" y="153" width="81" height="18"/>
+                                        <buttonCell key="cell" type="check" title="Japanese" bezelStyle="regularSquare" imagePosition="left" inset="2" id="xWb-b3-hw9">
+                                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                            <font key="font" metaFont="system"/>
+                                        </buttonCell>
+                                    </button>
+                                    <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="278-rG-Nd4">
+                                        <rect key="frame" x="273" y="173" width="81" height="18"/>
+                                        <buttonCell key="cell" type="check" title="Korean" bezelStyle="regularSquare" imagePosition="left" inset="2" id="47M-Bi-ykf">
+                                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                            <font key="font" metaFont="system"/>
+                                        </buttonCell>
+                                    </button>
+                                    <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="C8B-9C-uGS">
+                                        <rect key="frame" x="273" y="153" width="81" height="18"/>
+                                        <buttonCell key="cell" type="check" title="Swiss" bezelStyle="regularSquare" imagePosition="left" inset="2" id="NGt-yf-7i0">
+                                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                            <font key="font" metaFont="system"/>
+                                        </buttonCell>
+                                    </button>
+                                    <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Qhr-vh-JvW">
+                                        <rect key="frame" x="183" y="133" width="81" height="18"/>
+                                        <buttonCell key="cell" type="check" title="Swedish" bezelStyle="regularSquare" imagePosition="left" inset="2" id="QRY-GU-qpU">
+                                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                            <font key="font" metaFont="system"/>
+                                        </buttonCell>
+                                    </button>
+                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="okS-2P-yxS">
+                                        <rect key="frame" x="15" y="81" width="169" height="17"/>
+                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Current Estimated Cost: *" id="Jfp-O9-pRg">
+                                            <font key="font" metaFont="system"/>
+                                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                        </textFieldCell>
+                                    </textField>
+                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="JJC-gI-dfl">
+                                        <rect key="frame" x="273" y="76" width="74" height="22"/>
+                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="£5.00" id="jWP-dN-gLC">
+                                            <font key="font" metaFont="systemBold" size="16"/>
+                                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                        </textFieldCell>
+                                    </textField>
+                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="yZ3-S5-Iuy">
+                                        <rect key="frame" x="15" y="34" width="332" height="34"/>
+                                        <textFieldCell key="cell" sendsActionOnEndEditing="YES" alignment="center" title="* Based on supply and demand of translators and translations. Price may vary. See lingotool.com/pricing" id="vVY-eq-usV">
+                                            <font key="font" metaFont="systemLight" size="10"/>
+                                            <color key="textColor" name="scrollBarColor" catalog="System" colorSpace="catalog"/>
+                                            <color key="backgroundColor" name="controlHighlightColor" catalog="System" colorSpace="catalog"/>
+                                        </textFieldCell>
+                                    </textField>
+                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="HO6-eD-7gg">
+                                        <rect key="frame" x="310" y="221" width="37" height="17"/>
+                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="30 days" id="uwf-2m-Lhf">
+                                            <font key="font" metaFont="system" size="8"/>
+                                            <color key="textColor" name="scrollBarColor" catalog="System" colorSpace="catalog"/>
+                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                        </textFieldCell>
+                                    </textField>
+                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="f9U-gi-LnM">
+                                        <rect key="frame" x="310" y="275" width="37" height="17"/>
+                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="£10,000" id="LUJ-Tq-Pd7">
+                                            <font key="font" metaFont="system" size="8"/>
+                                            <color key="textColor" name="scrollBarColor" catalog="System" colorSpace="catalog"/>
+                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                        </textFieldCell>
+                                    </textField>
+                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="4pB-KK-mcD">
+                                        <rect key="frame" x="15" y="221" width="54" height="17"/>
+                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="30 minutes" id="eAc-aR-kcz">
+                                            <font key="font" metaFont="system" size="8"/>
+                                            <color key="textColor" name="scrollBarColor" catalog="System" colorSpace="catalog"/>
+                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                        </textFieldCell>
+                                    </textField>
+                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="6yi-4B-r54">
+                                        <rect key="frame" x="15" y="275" width="37" height="17"/>
+                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="£2.50" id="3Ti-DV-8Te">
+                                            <font key="font" metaFont="system" size="8"/>
+                                            <color key="textColor" name="scrollBarColor" catalog="System" colorSpace="catalog"/>
+                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                        </textFieldCell>
+                                    </textField>
+                                </subviews>
+                            </view>
+                        </tabViewItem>
+                        <tabViewItem label="Lingo Local" identifier="1" id="LDf-Ru-Wkp">
+                            <view key="view" ambiguous="YES" id="6E6-SA-Gb7">
+                                <rect key="frame" x="10" y="33" width="373" height="391"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                <subviews>
+                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Ncm-EZ-an7">
+                                        <rect key="frame" x="15" y="308" width="332" height="66"/>
+                                        <textFieldCell key="cell" sendsActionOnEndEditing="YES" id="AQF-MM-TZv">
+                                            <font key="font" metaFont="system"/>
+                                            <string key="title">Configure a path to the location of the file you wish to update. Lingo Tool will automatically keep track of exisiting strings. </string>
+                                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                        </textFieldCell>
+                                    </textField>
+                                    <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="fwX-Kc-B4s">
+                                        <rect key="frame" x="11" y="277" width="340" height="32"/>
+                                        <buttonCell key="cell" type="push" title="Select File Save Location" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="fg2-Gj-mtk">
+                                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                            <font key="font" metaFont="system"/>
+                                        </buttonCell>
+                                    </button>
+                                </subviews>
+                            </view>
+                        </tabViewItem>
+                        <tabViewItem label="Lingo Enterprise" identifier="1" id="z1O-8E-wBP">
+                            <view key="view" id="SNG-mQ-ffS">
+                                <rect key="frame" x="10" y="33" width="373" height="391"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                <subviews>
+                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="7OD-bT-qho">
+                                        <rect key="frame" x="15" y="350" width="332" height="38"/>
+                                        <textFieldCell key="cell" sendsActionOnEndEditing="YES" title="Plugin a remote server to enabe your translations to be modified instantly." id="4mS-ew-nht">
+                                            <font key="font" metaFont="system"/>
+                                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                        </textFieldCell>
+                                    </textField>
+                                    <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="qIh-a6-ESl">
+                                        <rect key="frame" x="212" y="202" width="139" height="32"/>
+                                        <buttonCell key="cell" type="push" title="Test Connection" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="zne-qB-yms">
+                                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                            <font key="font" metaFont="system"/>
+                                        </buttonCell>
+                                    </button>
+                                    <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="F40-uW-xod">
+                                        <rect key="frame" x="17" y="315" width="328" height="22"/>
+                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" placeholderString="Host url: (http://host.name/lingo-tool/)" drawsBackground="YES" id="Itd-YU-1Vs">
+                                            <font key="font" metaFont="system"/>
+                                            <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
+                                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                        </textFieldCell>
+                                    </textField>
+                                    <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Uyt-FF-I8R">
+                                        <rect key="frame" x="17" y="283" width="328" height="22"/>
+                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" placeholderString="Project Code: (ABC-123)" drawsBackground="YES" id="3Zv-hC-C47">
+                                            <font key="font" metaFont="system"/>
+                                            <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
+                                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                        </textFieldCell>
+                                    </textField>
+                                    <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="2FJ-yl-hgZ">
+                                        <rect key="frame" x="17" y="251" width="328" height="22"/>
+                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" placeholderString="Authentication Key: (KKK-4948-1328-4323)" drawsBackground="YES" id="tuu-sK-h8j">
+                                            <font key="font" metaFont="system"/>
+                                            <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
+                                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                        </textFieldCell>
+                                    </textField>
+                                </subviews>
+                            </view>
+                        </tabViewItem>
+                    </tabViewItems>
+                </tabView>
+                <popUpButton verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="2Xy-YG-M3G">
+                    <rect key="frame" x="162" y="499" width="220" height="26"/>
+                    <popUpButtonCell key="cell" type="push" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" id="rHN-H5-AUM">
+                        <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                        <font key="font" metaFont="menu"/>
+                        <menu key="menu" id="ohH-y2-dEl">
+                            <items>
+                                <menuItem title="Lingo Shared Plan" id="bCB-FL-XPQ">
+                                    <modifierMask key="keyEquivalentModifierMask"/>
+                                </menuItem>
+                                <menuItem title="Lingo Local Plan" id="SzD-gE-kN8">
+                                    <modifierMask key="keyEquivalentModifierMask"/>
+                                </menuItem>
+                                <menuItem title="Lingo Remote" id="jBu-BN-B7a"/>
+                            </items>
+                        </menu>
+                    </popUpButtonCell>
+                </popUpButton>
+            </subviews>
+            <point key="canvasLocation" x="94.5" y="441"/>
+        </customView>
+    </objects>
+</document>

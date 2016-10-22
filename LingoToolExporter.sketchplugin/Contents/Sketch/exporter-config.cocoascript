@@ -1,0 +1,37 @@
+@import 'sketch-nibui.js';
+
+var onRun = function(context) {
+  var alert = NSAlert.alloc().init();
+
+  alert.setMessageText('Lingo Tool Configuration');
+  alert.setInformativeText('Modify Lingo Tool Settings');
+  alert.addButtonWithTitle('Save');
+  alert.addButtonWithTitle('Cancel');
+  alert.setIcon(NSImage.alloc().initWithContentsOfFile(
+      context.plugin.urlForResourceNamed('logo@512x.png').path()));
+
+  var nibui = new NibUI(context,
+      'UIBundle', 'MyNibUI',
+      ['enterpriseConnectionTestButton']);
+  //'masterCurrentConfigurationButton', 'localFileLocationButton','enterpriseHostNameText', 'enterpriseProjectCodeText', 'enterpriseAuthenticationKeyText',
+  alert.setAccessoryView(nibui.view);
+
+  // Master Changes
+  //nibui.attachTargetAndAction(nibui.masterCurrentConfigurationButton, function() {
+  //  context.document.showMessage('hey');
+  //});
+/*
+  // Local Plan Changes
+  nibui.attachTargetAndAction(nibui.localFileLocationButton, function() {
+    context.document.showMessage('hey');
+  });
+
+  // Enterprise Plan Changes
+  nibui.attachTargetAndAction(nibui.enterpriseConnectionTestButton, function() {
+
+  });
+  */
+  alert.runModal();
+
+  nibui.destroy();
+};
