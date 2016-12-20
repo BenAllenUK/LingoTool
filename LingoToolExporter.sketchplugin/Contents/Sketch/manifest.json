@@ -20,12 +20,12 @@
         "name" : "Configure",
         "identifier" : "exporter-config"
       },
-    {
-      "script" : "exporter-main.js",
-      "handler" : "onRun",
-      "shortcut" : "ctrl shift i",
-      "name" : "Export",
-      "identifier" : "exporter-main"
-    }
-  ]
+      {
+        "script" : "exporter-main.js",
+        "handler" : "onExportAllStrings",
+        "shortcut" : "ctrl shift i",
+        "name" : "Export All Strings",
+        "identifier" : "exporter-main"
+      }
+    ]
 }

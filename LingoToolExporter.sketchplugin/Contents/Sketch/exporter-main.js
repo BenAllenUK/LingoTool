@@ -1,7 +1,9 @@
 var kVersion = "0.1.0"
 var kLoggerPrefix = "LingoTool"
 
-function onRun(context) {
+
+
+function onExportAllStrings(context) {
   var sketch = context.api()
 
   // Setup
@@ -9,69 +11,137 @@ function onRun(context) {
 
   var document = context.document
   var page = [document currentPage]
+  var artboards = [document artboards]
   var artboard = [page currentArtboard]
   var stringsMissingKeysArray = []
-  var keyStringStore = []
+  var copyStore = []
 
   // Iterate through each layer and grab strings
   if (artboard != null) {
-    p_recurseLayers([artboard layers]);
+    p_recurseLayers([artboard layers])
   } else {
-    p_recurseLayers([page children]);
+    p_recurseLayers([page children])
   }
 
-  // If there is any issues with keys
-  if (stringsMissingKeysArray.length > 0){
-    var prettyStringsMissingKeys = prettifyStringsArray(stringsMissingKeysArray)
-    displayUserError("There is " + stringsMissingKeysArray.length + " strings missing keys: \n" + prettyStringsMissingKeys)
-    return;
+  for (i = 0; i < artboards.length; i++) {
+    var thisArtboard = artboards[i]
+    LTLog("Artboard: " + thisArtboard.name())
+    var keyStringArrayResult = p_recurseLayers([thisArtboard layers])
+    var artboardStore = []
+    artboardStore["name"] = thisArtboard.name()
+    artboardStore["strings"] = keyStringArrayResult
+    copyStore.push(artboardStore)
+
+    exportImage(document, {
+        layer: this.artboard,
+        path: NSTemporaryDirectory(),
+        scale: 1,
+        suffix: "",
+        format: "png",
+        layer: thisArtboard,
+        path: NSHomeDirectory() + '/Desktop/AppScreenshots',
+        scale: 2,
+        name: thisArtboard.name()
+    });
+
   }
 
   // Otherwise notify user that strings were copied correctly
-  [document showMessage: "Copied " + keyStringStore.length + " strings"]
+  [document showMessage: "Copied " + copyStore.length + " strings"]
 
   // Deal with new strings translations
-  p_saveStringsToFile(keyStringStore)
+  p_saveStringsToFile(copyStore)
 
-  // Object Related functions
+  // MARK:- Object Related functions
+  function p_saveStringsToFile(thisStore) {
+    var contentForiOS = ""
+    var contentForAndroid = ""
 
-  function p_saveStringsToFile(thisStore){
-    LTLog("Response: " + thisStore)
+    for (i = 0; i < thisStore.length; i++) {
+      var artboardStore = thisStore[i]
+      contentForiOS += "\n/* - " + artboardStore["name"] + " - */\n"
+      contentForAndroid += "\n<!-- " + artboardStore["name"] + "-->\n"
+
+      for (j = 0; j < artboardStore["strings"].length; j++) {
+        var unitID = artboardStore["name"] + artboardStore["strings"][j]["id"]
+        var unitString = artboardStore["strings"][j]["string"]
+        var unitPrefix = artboardStore["strings"][j]["prefix"]
+        contentForiOS += appleLocalizationLine(unitPrefix + "." + unitID, unitString) + "\n"
+        contentForAndroid += androidLocalizationLine(unitPrefix + "." + unitID, unitString) + "\n"
+        LTLog(unitString)
+      }
+    }
+
+    // writeTextToFile(content, NSHomeDirectory() + '/Desktop/' + artboard.name() + '.txt')
+    writeTextToFile(contentForiOS, NSHomeDirectory() + '/Desktop/AppTranslations-iOS.localizable')
+    writeTextToFile(contentForAndroid, NSHomeDirectory() + '/Desktop/AppTranslations-Android.xml')
+  }
+
+  function appleLocalizationLine(id, content) {
+    return "\"" + id + "\"=\"" + content + "\""
+  }
+
+  function androidLocalizationLine(id, content) {
+    return "<string name=\"" + id + "\">" + content + "</string>"
+  }
+
+  function exportImage(document, options) {
+      var slice = MSExportRequest.exportRequestsFromExportableLayer(options.layer).firstObject()
+      var savePathName = [];
+
+      slice.scale = options.scale;
+      slice.format = options.format;
+
+      savePathName.push(
+              options.path,
+              "/",
+              options.name,
+              options.suffix,
+              ".",
+              options.format
+          );
+      savePathName = savePathName.join("");
+
+      document.saveArtboardOrSlice_toFile(slice, savePathName);
+
+      return savePathName;
   }
 
   function p_recurseLayers(layers, parentName) {
+    var keyStringArray = []
     for (var i = 0; i < [layers count]; i++) {
       var layer = [layers objectAtIndex:i]
 
       if ([layer isMemberOfClass:[MSTextLayer class]]) {
-        p_copyTextString(layer)
+        var keyStringObj = p_copyTextString(parentName, layer)
+        keyStringArray.push(keyStringObj)
       }
+
+
 
       if ([layer isMemberOfClass:[MSLayerGroup class]]) {
         var groupKeyName = parentName + "." + [layer name]
-        p_recurseLayers([layer layers], groupKeyName)
+        var newKeyStringArray = p_recurseLayers([layer layers], groupKeyName)
+        keyStringArray.concat(newKeyStringArray)
       }
     }
+    return keyStringArray;
   }
 
-  function p_copyTextString(layer){
-    if ([layer name] == [layer stringValue]){
-      stringsMissingKeysArray.push([layer stringValue])
-      return
-    }
-
+  function p_copyTextString(groupPrefix, layer){
     var keyStringObject = {
       "id" : [layer name],
+      "prefix" : groupPrefix,
       "string" : [layer stringValue]
     }
 
-    keyStringStore.push(keyStringObject)
+    return keyStringObject;
   }
 
 };
 
 
-// Utility Functions
+// MARK:- Utility Functions
 function prettifyStringsArray(unPrettyArray){
   var workingString = ""
   for (var i = 0; i < unPrettyArray.length; i++) {
