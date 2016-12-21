@@ -31,12 +31,12 @@ var PreviewHelper = {
     },
 
     highlightTextLayers: function(rootLayer, layer) {
-      var newRect = this.p_abolsuteFrameForLayer(layer)
+      var newRect = this.p_absoluteFrameForLayer(layer)
       var color = layer.text.indexOf(layer.name) == 0 ? "#E8AE2B30" : "#4BCA0F30"
       rootLayer.newShape({"frame": newRect, fills: [color], borders: []})
     },
 
-    p_abolsuteFrameForLayer: function(layer) {
+    p_absoluteFrameForLayer: function(layer) {
       return this.recurseFrameForLayer(layer, layer, 0, 0)
     },
 
@@ -126,10 +126,9 @@ function onPreviewToggle(context) {
 
       var container = PreviewHelper.createGroupFromArtboard(layer)
       var path = LayerHelper.cleanName(layer.name)
-      var textLayers = LayerHelper.findTextLayers(layer, path)
-
-      for (var i in textLayers) {
-        PreviewHelper.highlightTextLayers(container, textLayers[i])
+      var textObjects = LayerHelper.findTextLayers(layer, path)
+      for (var i in textObjects) {
+        PreviewHelper.highlightTextLayers(container, textObjects[i]['layer'])
       }
     }
   });
@@ -165,6 +164,47 @@ var ExportHelper = {
         name: artboardLayer.name
     });
   },
+
+  // TODO: Replace with Sketch API Export when available
+  exportArtboardImagesUsingMSAPI: function(document) {
+    var page = [document currentPage]
+    var artboards = [document artboards]
+
+    for (i = 0; i < artboards.length; i++) {
+      var thisArtboard = artboards[i]
+      log(thisArtboard.name())
+      this.exportImage(document, {
+          suffix: "",
+          format: "png",
+          layer: thisArtboard,
+          path: NSHomeDirectory() + '/Desktop/AppScreenshots',
+          scale: 2,
+          name: thisArtboard.name()
+      });
+    }
+  },
+
+  exportImage: function(document, options) {
+      var slice = MSExportRequest.exportRequestsFromExportableLayer(options.layer).firstObject()
+      var savePathName = [];
+
+      slice.scale = options.scale;
+      slice.format = options.format;
+
+      savePathName.push(
+              options.path,
+              "/",
+              options.name,
+              options.suffix,
+              ".",
+              options.format
+          );
+      savePathName = savePathName.join("");
+
+      document.saveArtboardOrSlice_toFile(slice, savePathName);
+
+      return savePathName;
+  }
 }
 
 function onExportAllStrings(context) {
@@ -186,7 +226,7 @@ function onExportAllStrings(context) {
     }
   })
 
-  exportArtboardImagesUsingMSAPI(document)
+  ExportHelper.exportArtboardImagesUsingMSAPI(document)
 
 
 
@@ -294,46 +334,6 @@ var FileUtil = {
   removeFileOrFolder: function(filePath) {
     [[NSFileManager defaultManager] removeItemAtPath:filePath error:nil];
   }
-}
-
-function exportArtboardImagesUsingMSAPI(document) {
-  var page = [document currentPage]
-  var artboards = [document artboards]
-
-  for (i = 0; i < artboards.length; i++) {
-    var thisArtboard = artboards[i]
-    log(thisArtboard.name())
-    exportImage(document, {
-        suffix: "",
-        format: "png",
-        layer: thisArtboard,
-        path: NSHomeDirectory() + '/Desktop/AppScreenshots',
-        scale: 2,
-        name: thisArtboard.name()
-    });
-  }
-}
-
-function exportImage(document, options) {
-    var slice = MSExportRequest.exportRequestsFromExportableLayer(options.layer).firstObject()
-    var savePathName = [];
-
-    slice.scale = options.scale;
-    slice.format = options.format;
-
-    savePathName.push(
-            options.path,
-            "/",
-            options.name,
-            options.suffix,
-            ".",
-            options.format
-        );
-    savePathName = savePathName.join("");
-
-    document.saveArtboardOrSlice_toFile(slice, savePathName);
-
-    return savePathName;
 }
 
 // Logger Functions
