@@ -1,6 +1,7 @@
 var kVersion = "0.1.0"
 var kLoggerPrefix = "LingoTool"
 var kFolderName = "LingoTool Preview"
+var kDifferentalCharacter = "."
 
 var PreviewHelper = {
     init(sketchAPI){
@@ -55,19 +56,23 @@ var LayerHelper = {
   isValidName: function(layer) {
     return layer.name.indexOf("-") != 0
   },
-  findTextLayers: function(layer) {
+  cleanName: function(name) {
+    return name
+  },
+  findTextLayers: function(layer, path) {
     var textLayers = []
     if (layer.isText && this.isValidName(layer)) {
-      textLayers.push(layer)
+      var foundObject = []
+      foundObject['layer'] = layer
+      foundObject['path'] = path
+      log(layer.name)
+      textLayers.push(foundObject)
     }
 
     if (layer.isGroup) {
+      var newPath = path + kDifferentalCharacter + this.cleanName(layer.name)
       layer.iterate(function(subLayer) {
-        var moreLayers = LayerHelper.findTextLayers(subLayer)
-        contents = ""
-        for (i = 0; i < moreLayers.length; i++){
-          contents += moreLayers[i].name
-        }
+        var moreLayers = LayerHelper.findTextLayers(subLayer, newPath)
         textLayers = Util.mergeByNameProperty(textLayers, moreLayers)
       })
     }
@@ -96,19 +101,17 @@ var Util = {
     }
 
     return arr3
+  },
+  displayUserError: function(message){
+    var app = NSApplication.sharedApplication()
+    app.displayDialog_withTitle(message, "LingoTool Error")
   }
 }
-
-var previewEnabled
 
 function onPreviewToggle(context) {
   var sketch = context.api()
   PreviewHelper.init(sketch)
   logVersionInfo(sketch)
-
-  previewEnabled = previewEnabled ? false : true
-
-  log(previewEnabled ? "YES" : "NO")
 
   var selectedPage = sketch.selectedDocument.selectedPage
 
@@ -122,54 +125,185 @@ function onPreviewToggle(context) {
       PreviewHelper.removeGroupFromArtboard(layer)
 
       var container = PreviewHelper.createGroupFromArtboard(layer)
+      var path = LayerHelper.cleanName(layer.name)
+      var textLayers = LayerHelper.findTextLayers(layer, path)
 
-      var textLayers = LayerHelper.findTextLayers(layer)
-      for (i = 0; i < textLayers.length; i++){
-        log(textLayers[i].name)
-      }
-
-      for (var i = 0; i < textLayers.length; i++) {
+      for (var i in textLayers) {
         PreviewHelper.highlightTextLayers(container, textLayers[i])
       }
     }
   });
+}
 
+var ExportHelper = {
+  init(sketchAPI){
+    this.sketchAPI = sketchAPI
+  },
 
+  recurseArtboard: function(layer) {
+    var artboardCopy = []
+    artboardCopy["name"] = layer.name
+
+    var path = LayerHelper.cleanName(layer.name)
+    var textLayers = LayerHelper.findTextLayers(layer, path)
+
+    for (var i in textLayers.length) {
+      var thisTextHolder = textLayers[i]
+      var thisTextLayer = thisTextHolder['layer']
+      log(thisTextLayer.name)
+    }
+  },
+
+  p_exportImageWithDefaultOptions: function(artboardLayer) {
+    this.p_exportImage({
+        layer: artboardLayer,
+        path: NSTemporaryDirectory(),
+        scale: 1,
+        suffix: "",
+        format: "png",
+        path: NSHomeDirectory() + '/Desktop/AppScreenshots',
+        name: artboardLayer.name
+    });
+  },
 }
 
 function onExportAllStrings(context) {
-  var sketch = context.api()
-
+  var sketchAPI = context.api()
+  ExportHelper.init(sketchAPI)
   // Setup
-  logVersionInfo(sketch)
+  logVersionInfo(sketchAPI)
 
   var document = context.document
-  var page = [document currentPage]
-  var artboards = [document artboards]
-  var artboard = [page currentArtboard]
+  var selectedPage = sketchAPI.selectedDocument.selectedPage
+
   var stringsMissingKeysArray = []
   var copyStore = []
 
-  // Iterate through each layer and grab strings
-  if (artboard != null) {
-    p_recurseLayers([artboard layers])
-  } else {
-    p_recurseLayers([page children])
+  var artboardStore = []
+  selectedPage.iterate(function(layer) {
+    if (layer.isArtboard) {
+      var artboardCopy = ExportHelper.recurseArtboard(layer)
+    }
+  })
+
+  exportArtboardImagesUsingMSAPI(document)
+
+
+
+  // Otherwise notify user that strings were copied correctly
+
+
+  // Deal with new strings translations
+  // p_saveStringsToFile(copyStore)
+
+  // MARK:- Object Related functions
+  // function p_saveStringsToFile(thisStore) {
+  //   var contentForiOS = ""
+  //   var contentForAndroid = ""
+  //
+  //   for (i = 0; i < thisStore.length; i++) {
+  //     var artboardStore = thisStore[i]
+  //     contentForiOS += "\n/* - " + artboardStore["name"] + " - */\n"
+  //     contentForAndroid += "\n<!-- " + artboardStore["name"] + "-->\n"
+  //
+  //     for (j = 0; j < artboardStore["strings"].length; j++) {
+  //       var unitID = artboardStore["name"] + artboardStore["strings"][j]["id"]
+  //       var unitString = artboardStore["strings"][j]["string"]
+  //       var unitPrefix = artboardStore["strings"][j]["prefix"]
+  //       contentForiOS += appleLocalizationLine(unitPrefix + "." + unitID, unitString) + "\n"
+  //       contentForAndroid += androidLocalizationLine(unitPrefix + "." + unitID, unitString) + "\n"
+  //       LTLog(unitString)
+  //     }
+  //   }
+  //
+  //   // writeTextToFile(content, NSHomeDirectory() + '/Desktop/' + artboard.name() + '.txt')
+  //   writeTextToFile(contentForiOS, NSHomeDirectory() + '/Desktop/AppTranslations-iOS.localizable')
+  //   writeTextToFile(contentForAndroid, NSHomeDirectory() + '/Desktop/AppTranslations-Android.xml')
+  // }
+  //
+  // function appleLocalizationLine(id, content) {
+  //   return "\"" + id + "\"=\"" + content + "\""
+  // }
+  //
+  // function androidLocalizationLine(id, content) {
+  //   return "<string name=\"" + id + "\">" + content + "</string>"
+  // }
+};
+
+// MARK:- Utility Functions
+function prettifyStringsArray(unPrettyArray){
+  var workingString = ""
+  for (var i in unPrettyArray) {
+    workingString += " - " + unPrettyArray[i] + "\n"
   }
+  return workingString
+}
+
+// File Utilities
+var FileUtil = {
+  writeTextToFile: function(text, filePath) {
+    var t = [NSString stringWithFormat:@"%@", text],
+    f = [NSString stringWithFormat:@"%@", filePath];
+    return [t writeToFile:f atomically:true encoding:NSUTF8StringEncoding error:nil];
+  },
+
+  readTextFromFile: function(filePath) {
+    var fileManager = [NSFileManager defaultManager];
+    if([fileManager fileExistsAtPath:filePath]) {
+        return [NSString stringWithContentsOfFile:filePath encoding:NSUTF8StringEncoding error:nil];
+    }
+    return nil;
+  },
+
+  jsonFromFile: function(filePath, mutable) {
+    var data = [NSData dataWithContentsOfFile:filePath];
+	  var options = mutable == true ? NSJSONReadingMutableContainers : 0
+	  return [NSJSONSerialization JSONObjectWithData:data options:options error:nil];
+  },
+
+  saveJsonToFile: function(jsonObj, filePath) {
+    this.writeTextToFile(stringify(jsonObj), filePath);
+  },
+
+  stringify: function(obj, prettyPrinted) {
+    var prettySetting = prettyPrinted ? NSJSONWritingPrettyPrinted : 0,
+    jsonData = [NSJSONSerialization dataWithJSONObject:obj options:prettySetting error:nil];
+    return [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
+  },
+
+  createTempFolderNamed: function(name) {
+    var tempPath = getTempFolderPath(name);
+    createFolderAtPath(tempPath);
+    return tempPath;
+  },
+
+  getTempFolderPath: function(withName) {
+    var fileManager = [NSFileManager defaultManager],
+    cachesURL = [[fileManager URLsForDirectory:NSCachesDirectory inDomains:NSUserDomainMask] lastObject],
+    withName = (typeof withName !== 'undefined') ? withName : (Date.now() / 1000),
+    folderName = [NSString stringWithFormat:"%@", withName];
+    return [[cachesURL URLByAppendingPathComponent:folderName] path];
+  },
+
+  createFolderAtPath: function(pathString) {
+    var fileManager = [NSFileManager defaultManager];
+    if([fileManager fileExistsAtPath:pathString]) return true;
+    return [fileManager createDirectoryAtPath:pathString withIntermediateDirectories:true attributes:nil error:nil];
+  },
+
+  removeFileOrFolder: function(filePath) {
+    [[NSFileManager defaultManager] removeItemAtPath:filePath error:nil];
+  }
+}
+
+function exportArtboardImagesUsingMSAPI(document) {
+  var page = [document currentPage]
+  var artboards = [document artboards]
 
   for (i = 0; i < artboards.length; i++) {
     var thisArtboard = artboards[i]
-    LTLog("Artboard: " + thisArtboard.name())
-    var keyStringArrayResult = p_recurseLayers([thisArtboard layers])
-    var artboardStore = []
-    artboardStore["name"] = thisArtboard.name()
-    artboardStore["strings"] = keyStringArrayResult
-    copyStore.push(artboardStore)
-
+    log(thisArtboard.name())
     exportImage(document, {
-        layer: this.artboard,
-        path: NSTemporaryDirectory(),
-        scale: 1,
         suffix: "",
         format: "png",
         layer: thisArtboard,
@@ -177,172 +311,29 @@ function onExportAllStrings(context) {
         scale: 2,
         name: thisArtboard.name()
     });
-
   }
-
-  // Otherwise notify user that strings were copied correctly
-  [document showMessage: "Copied " + copyStore.length + " strings"]
-
-  // Deal with new strings translations
-  p_saveStringsToFile(copyStore)
-
-  // MARK:- Object Related functions
-  function p_saveStringsToFile(thisStore) {
-    var contentForiOS = ""
-    var contentForAndroid = ""
-
-    for (i = 0; i < thisStore.length; i++) {
-      var artboardStore = thisStore[i]
-      contentForiOS += "\n/* - " + artboardStore["name"] + " - */\n"
-      contentForAndroid += "\n<!-- " + artboardStore["name"] + "-->\n"
-
-      for (j = 0; j < artboardStore["strings"].length; j++) {
-        var unitID = artboardStore["name"] + artboardStore["strings"][j]["id"]
-        var unitString = artboardStore["strings"][j]["string"]
-        var unitPrefix = artboardStore["strings"][j]["prefix"]
-        contentForiOS += appleLocalizationLine(unitPrefix + "." + unitID, unitString) + "\n"
-        contentForAndroid += androidLocalizationLine(unitPrefix + "." + unitID, unitString) + "\n"
-        LTLog(unitString)
-      }
-    }
-
-    // writeTextToFile(content, NSHomeDirectory() + '/Desktop/' + artboard.name() + '.txt')
-    writeTextToFile(contentForiOS, NSHomeDirectory() + '/Desktop/AppTranslations-iOS.localizable')
-    writeTextToFile(contentForAndroid, NSHomeDirectory() + '/Desktop/AppTranslations-Android.xml')
-  }
-
-  function appleLocalizationLine(id, content) {
-    return "\"" + id + "\"=\"" + content + "\""
-  }
-
-  function androidLocalizationLine(id, content) {
-    return "<string name=\"" + id + "\">" + content + "</string>"
-  }
-
-  function exportImage(document, options) {
-      var slice = MSExportRequest.exportRequestsFromExportableLayer(options.layer).firstObject()
-      var savePathName = [];
-
-      slice.scale = options.scale;
-      slice.format = options.format;
-
-      savePathName.push(
-              options.path,
-              "/",
-              options.name,
-              options.suffix,
-              ".",
-              options.format
-          );
-      savePathName = savePathName.join("");
-
-      document.saveArtboardOrSlice_toFile(slice, savePathName);
-
-      return savePathName;
-  }
-
-  function p_recurseLayers(layers, parentName) {
-    var keyStringArray = []
-    for (var i = 0; i < [layers count]; i++) {
-      var layer = [layers objectAtIndex:i]
-
-      if ([layer isMemberOfClass:[MSTextLayer class]]) {
-        var keyStringObj = p_copyTextString(parentName, layer)
-        keyStringArray.push(keyStringObj)
-      }
-
-
-
-      if ([layer isMemberOfClass:[MSLayerGroup class]]) {
-        var groupKeyName = parentName + "." + [layer name]
-        var newKeyStringArray = p_recurseLayers([layer layers], groupKeyName)
-        keyStringArray.concat(newKeyStringArray)
-      }
-    }
-    return keyStringArray;
-  }
-
-  function p_copyTextString(groupPrefix, layer){
-    var keyStringObject = {
-      "id" : [layer name],
-      "prefix" : groupPrefix,
-      "string" : [layer stringValue]
-    }
-
-    return keyStringObject;
-  }
-
-};
-
-
-// MARK:- Utility Functions
-function prettifyStringsArray(unPrettyArray){
-  var workingString = ""
-  for (var i = 0; i < unPrettyArray.length; i++) {
-    workingString += " - " + unPrettyArray[i] + "\n"
-  }
-  return workingString
 }
 
-// File Utilities
-var writeTextToFile = function(text, filePath) {
-    var t = [NSString stringWithFormat:@"%@", text],
-    f = [NSString stringWithFormat:@"%@", filePath];
-    return [t writeToFile:f atomically:true encoding:NSUTF8StringEncoding error:nil];
-}
+function exportImage(document, options) {
+    var slice = MSExportRequest.exportRequestsFromExportableLayer(options.layer).firstObject()
+    var savePathName = [];
 
-var readTextFromFile = function(filePath) {
-    var fileManager = [NSFileManager defaultManager];
-    if([fileManager fileExistsAtPath:filePath]) {
-        return [NSString stringWithContentsOfFile:filePath encoding:NSUTF8StringEncoding error:nil];
-    }
-    return nil;
-}
+    slice.scale = options.scale;
+    slice.format = options.format;
 
-var jsonFromFile = function(filePath, mutable) {
-    var data = [NSData dataWithContentsOfFile:filePath];
-	var options = mutable == true ? NSJSONReadingMutableContainers : 0
-	return [NSJSONSerialization JSONObjectWithData:data options:options error:nil];
-}
+    savePathName.push(
+            options.path,
+            "/",
+            options.name,
+            options.suffix,
+            ".",
+            options.format
+        );
+    savePathName = savePathName.join("");
 
-var saveJsonToFile = function(jsonObj, filePath) {
-    writeTextToFile(stringify(jsonObj), filePath);
-}
+    document.saveArtboardOrSlice_toFile(slice, savePathName);
 
-var stringify = function(obj, prettyPrinted) {
-    var prettySetting = prettyPrinted ? NSJSONWritingPrettyPrinted : 0,
-    jsonData = [NSJSONSerialization dataWithJSONObject:obj options:prettySetting error:nil];
-    return [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
-}
-
-var createTempFolderNamed = function(name) {
-    var tempPath = getTempFolderPath(name);
-    createFolderAtPath(tempPath);
-    return tempPath;
-}
-
-var getTempFolderPath = function(withName) {
-    var fileManager = [NSFileManager defaultManager],
-    cachesURL = [[fileManager URLsForDirectory:NSCachesDirectory inDomains:NSUserDomainMask] lastObject],
-    withName = (typeof withName !== 'undefined') ? withName : (Date.now() / 1000),
-    folderName = [NSString stringWithFormat:"%@", withName];
-    return [[cachesURL URLByAppendingPathComponent:folderName] path];
-}
-
-var createFolderAtPath = function(pathString) {
-    var fileManager = [NSFileManager defaultManager];
-    if([fileManager fileExistsAtPath:pathString]) return true;
-    return [fileManager createDirectoryAtPath:pathString withIntermediateDirectories:true attributes:nil error:nil];
-}
-
-var removeFileOrFolder = function(filePath) {
-    [[NSFileManager defaultManager] removeItemAtPath:filePath error:nil];
-}
-
-// Alert Functions
-function displayUserError(message){
-  var app = NSApplication.sharedApplication()
-  app.displayDialog_withTitle(message, "LingoTool Error")
+    return savePathName;
 }
 
 // Logger Functions
