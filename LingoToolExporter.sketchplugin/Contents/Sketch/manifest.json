@@ -7,8 +7,10 @@
     "author" : "Ben Allen",
     "menu" : {
       "items" : [
-        "exporter-main",
-        "exporter-config"
+        "export-preview",
+        "export-all",
+        "-",
+        "config"
       ],
       "title" : "LingoTool"
     },
@@ -18,14 +20,21 @@
         "handler" : "onRun",
         "shortcut" : "ctrl cmd u",
         "name" : "Configure",
-        "identifier" : "exporter-config"
+        "identifier" : "config"
       },
       {
         "script" : "exporter-main.js",
         "handler" : "onExportAllStrings",
         "shortcut" : "ctrl shift i",
-        "name" : "Export All Strings",
-        "identifier" : "exporter-main"
+        "name" : "Export all strings",
+        "identifier" : "export-all"
+      },
+      {
+        "script" : "exporter-main.js",
+        "handler" : "onPreviewToggle",
+        "shortcut" : "ctrl shift u",
+        "name" : "Preview all strings",
+        "identifier" : "export-preview"
       }
     ]
 }

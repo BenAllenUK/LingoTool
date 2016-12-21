@@ -1,7 +1,141 @@
 var kVersion = "0.1.0"
 var kLoggerPrefix = "LingoTool"
+var kFolderName = "LingoTool Preview"
+
+var PreviewHelper = {
+    init(sketchAPI){
+      this.sketchAPI = sketchAPI
+    },
+
+    createGroupFromArtboard: function(artboard) {
+      return artboard.newGroup({frame: new this.sketchAPI.Rectangle(0, 0, artboard.frame.width, artboard.frame.height), name: kFolderName})
+    },
+
+    removeGroupFromArtboard: function(artboard) {
+      artboard.iterate(function(layer){
+        if (layer.name.indexOf(kFolderName) == 0) {
+          layer.remove()
+        }
+      })
+    },
+
+    groupExistsFromArtboard: function(artboard) {
+      var result = false
+      artboard.iterate(function(layer){
+        if (layer.name.indexOf(kFolderName) == 0) {
+          result = true
+        }
+      })
+      return result
+    },
+
+    highlightTextLayers: function(rootLayer, layer) {
+      var newRect = this.p_abolsuteFrameForLayer(layer)
+      var color = layer.text.indexOf(layer.name) == 0 ? "#E8AE2B30" : "#4BCA0F30"
+      rootLayer.newShape({"frame": newRect, fills: [color], borders: []})
+    },
+
+    p_abolsuteFrameForLayer: function(layer) {
+      return this.recurseFrameForLayer(layer, layer, 0, 0)
+    },
+
+    recurseFrameForLayer: function(orgLayer, workingLayer, x, y) {
+      if (workingLayer.isArtboard) {
+        return new this.sketchAPI.Rectangle(x, y, orgLayer.frame.width, orgLayer.frame.height)
+      }
+      else {
+        x = x + workingLayer.frame.x
+        y = y + workingLayer.frame.y
+        return this.recurseFrameForLayer(orgLayer, workingLayer.container, x, y)
+      }
+    }
+}
+
+var LayerHelper = {
+  isValidName: function(layer) {
+    return layer.name.indexOf("-") != 0
+  },
+  findTextLayers: function(layer) {
+    var textLayers = []
+    if (layer.isText && this.isValidName(layer)) {
+      textLayers.push(layer)
+    }
+
+    if (layer.isGroup) {
+      layer.iterate(function(subLayer) {
+        var moreLayers = LayerHelper.findTextLayers(subLayer)
+        contents = ""
+        for (i = 0; i < moreLayers.length; i++){
+          contents += moreLayers[i].name
+        }
+        textLayers = Util.mergeByNameProperty(textLayers, moreLayers)
+      })
+    }
+
+    return textLayers
+  }
+}
+
+var Util = {
+  extend: function( options, target ){
+      var target = target || this;
+
+      for ( var key in options ){
+          target[key] = options[key];
+      }
+      return target;
+  },
+  mergeByNameProperty: function (arr1, arr2) {
+    var arr3 = []
+    for(var i in arr1) {
+      arr3.push(arr1[i])
+    }
+
+    for (var i in arr2) {
+      arr3.push(arr2[i])
+    }
+
+    return arr3
+  }
+}
+
+var previewEnabled
+
+function onPreviewToggle(context) {
+  var sketch = context.api()
+  PreviewHelper.init(sketch)
+  logVersionInfo(sketch)
+
+  previewEnabled = previewEnabled ? false : true
+
+  log(previewEnabled ? "YES" : "NO")
+
+  var selectedPage = sketch.selectedDocument.selectedPage
+
+  selectedPage.iterate(function(layer) {
+    if (layer.isArtboard) {
+      if (PreviewHelper.groupExistsFromArtboard(layer)) {
+        PreviewHelper.removeGroupFromArtboard(layer)
+        return
+      }
+
+      PreviewHelper.removeGroupFromArtboard(layer)
+
+      var container = PreviewHelper.createGroupFromArtboard(layer)
+
+      var textLayers = LayerHelper.findTextLayers(layer)
+      for (i = 0; i < textLayers.length; i++){
+        log(textLayers[i].name)
+      }
+
+      for (var i = 0; i < textLayers.length; i++) {
+        PreviewHelper.highlightTextLayers(container, textLayers[i])
+      }
+    }
+  });
 
 
+}
 
 function onExportAllStrings(context) {
   var sketch = context.api()
