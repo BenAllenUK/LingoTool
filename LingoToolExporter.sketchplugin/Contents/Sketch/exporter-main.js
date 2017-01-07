@@ -34,6 +34,7 @@ var PreviewHelper = {
       var newRect = this.p_absoluteFrameForLayer(layer)
       var color = layer.text.indexOf(layer.name) == 0 ? "#E8AE2B30" : "#4BCA0F30"
       rootLayer.newShape({"frame": newRect, fills: [color], borders: []})
+      // rootLayer.setIsLocked(1)
     },
 
     p_absoluteFrameForLayer: function(layer) {
@@ -58,6 +59,12 @@ var LayerHelper = {
   },
   cleanName: function(name) {
     return name
+  },
+  nameForiOS: function(name) {
+    return str.trim().replace(/[.,\/#!$%\^&\*;:{}=`~()]/g,"").replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();}).replace(" ", "")
+  },
+  nameForAndroid: function(name) {
+    return str.trim().replace(/[,\/#!$%\^&\*;:{}=`~()]/g,"").replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();}).replace(" ", "_")
   },
   findTextLayers: function(layer, path) {
     var textLayers = []
@@ -130,6 +137,7 @@ function onPreviewToggle(context) {
       for (var i in textObjects) {
         PreviewHelper.highlightTextLayers(container, textObjects[i]['layer'])
       }
+      // container.setIsLocked(1)
     }
   });
 }
