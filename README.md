@@ -2,13 +2,15 @@
 
 LingoTool Exporter takes all the strings from Sketch and exports them to a choosen file format. It can be used to **create**, **update** and **remove** strings in files and **creates keys** based of the heirachy of the layers. It also packages up images of the screens that can be used as a reference.
 
+![Export from sketch to .po files](export.gif)
+
 ## Requirements
  - Sketch >= 3.4 (not with the sandboxed version ie from the App Store).
 
 ## Installing Plugins
 
 [Download the ZIP file](https://github.com/BenAllenUK/LingoTool-Exporter/archive/develop.zip) and unzip
-Open LingoTool-Exporter.sketchplugin
+LingoTool-Exporter.sketchplugin
 
 ## Supported Exports
 
@@ -23,9 +25,6 @@ Open LingoTool-Exporter.sketchplugin
 | CSV            | ❌        | TBD   |
 | XLIFF          | ❌        | TBD   |
 | GNU Gettext    | ❌        | TBD   |
-
-
-![Export from sketch to .po files](export.gif)
 
 ## Contributors
 
