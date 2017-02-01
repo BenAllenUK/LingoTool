@@ -1,6 +1,6 @@
 # LingoTool
 
-LingoTool Exporter takes all the strings from Sketch and exports them to a choosen file format. It can be used to **create**, **update** and **remove** strings in files and **creates keys** based of the heirachy of the layers. It also packages up images of the screens that can be used as a reference.
+LingoTool takes all the strings from Sketch and exports them to a choosen file format. It can be used to **create**, **update** and **remove** strings in files and **creates keys** based of the heirachy of the layers. It also packages up images of the screens that can be used as a reference.
 
 ![Export from sketch to .po files](export.gif)
 
