@@ -1,0 +1,33 @@
+{
+    "name" : "LingoTool",
+    "identifier" : "info.benallen.lingotool",
+    "version" : "0.1.0",
+    "description" : "LingoTool takes all the strings from Sketch and exports them to a choosen file format. ",
+    "authorEmail" : "me@benallen.info",
+    "author" : "Ben Allen",
+    "menu" : {
+      "items" : [
+        "export-preview",
+        "export-all",
+        "-",
+        "config"
+      ],
+      "title" : "LingoTool"
+    },
+    "commands" : [
+      {
+        "script" : "exporter-main.js",
+        "handler" : "onExportAllStrings",
+        "shortcut" : "ctrl shift i",
+        "name" : "Export all strings",
+        "identifier" : "export-all"
+      },
+      {
+        "script" : "exporter-main.js",
+        "handler" : "onPreviewToggle",
+        "shortcut" : "ctrl shift u",
+        "name" : "Preview all strings",
+        "identifier" : "export-preview"
+      }
+    ]
+}
