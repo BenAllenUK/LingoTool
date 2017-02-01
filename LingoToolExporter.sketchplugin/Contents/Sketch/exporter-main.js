@@ -2,7 +2,9 @@ var kVersion = "0.1.0"
 var kLoggerPrefix = "LingoTool"
 var kFolderName = "LingoTool Preview"
 var kDifferentalCharacter = "."
-
+var kPOFile = NSHomeDirectory() + '/Desktop/AppTranslations.po'
+var kImageFolder = NSHomeDirectory() + '/Desktop/AppScreenshots'
+var deprecatedDocument = []
 var PreviewHelper = {
     init(sketchAPI){
       this.sketchAPI = sketchAPI
@@ -32,10 +34,14 @@ var PreviewHelper = {
 
     highlightTextLayers: function(rootLayer, layer) {
       var newRect = this.p_absoluteFrameForLayer(layer)
-      var color = layer.text.indexOf(layer.name) == 0 ? "#E8AE2B30" : "#4BCA0F30"
+      var color = layer.text.indexOf(layer.name) == 0 ? "#E8AE2B50" : "#4BCA0F30"
       rootLayer.newShape({"frame": newRect, fills: [color], borders: []})
       // rootLayer.setIsLocked(1)
+      // var msLayer = Util.findMSItemWithId(deprecatedDocument, rootLayer.id)
+      // msLayer.setIsLocked(1)
     },
+    
+    
 
     p_absoluteFrameForLayer: function(layer) {
       return this.recurseFrameForLayer(layer, layer, 0, 0)
@@ -58,7 +64,12 @@ var LayerHelper = {
     return layer.name.indexOf("-") != 0
   },
   cleanName: function(name) {
-    return name
+    var newName = name.trim().replace(/[,\/#!$%\^&\*;:{}=`~()]/g,"").replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();})
+    newName = newName.split('.').filter(txt => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase()).join("")
+    newName = newName.split(' ').filter(txt => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase()).join("")
+    newName = newName.split('_').filter(txt => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase()).join("")
+    newName = newName.split('-').filter(txt => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase()).join("")
+    return newName
   },
   nameForiOS: function(name) {
     return str.trim().replace(/[.,\/#!$%\^&\*;:{}=`~()]/g,"").replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();}).replace(" ", "")
@@ -71,8 +82,7 @@ var LayerHelper = {
     if (layer.isText && this.isValidName(layer)) {
       var foundObject = []
       foundObject['layer'] = layer
-      foundObject['path'] = path
-      log(layer.name)
+      foundObject['path'] = path + kDifferentalCharacter + this.cleanName(layer.name)
       textLayers.push(foundObject)
     }
 
@@ -109,18 +119,45 @@ var Util = {
 
     return arr3
   },
-  displayUserError: function(message){
-    var app = NSApplication.sharedApplication()
-    app.displayDialog_withTitle(message, "LingoTool Error")
+  displayUserMessage: function(message){
+      var app = NSApplication.sharedApplication()
+      app.displayDialog_withTitle(message, "LingoTool")
+  },
+  
+  findMSItemWithId: function(document, id) {
+    var page = [deprecatedDocument currentPage]
+    var artboards = [deprecatedDocument artboards]
+    for (var i = 0; i < [artboards count]; i++) {
+    //  return this.findMSItemFromRoot(artboards[i], id)
+    }
+  },
+  
+  findMSItemFromRoot: function(currentItem, id) {
+    if ([currentItem objectID] == id) {
+      return currentItem
+    }
+    
+    if ([currentItem isKindOfClass:[MSLayerGroup class]]) {
+      var layers = [currentItem layers]
+      log(layers)
+
+      for (var i = 0; i < [layers count]; i++) {
+        return Util.findMSItemWithId(layers[i], id)
+      }
+    }
+    return
   }
 }
 
+
 function onPreviewToggle(context) {
   var sketch = context.api()
-  PreviewHelper.init(sketch)
+  deprecatedDocument = context.document
+  PreviewHelper.init(sketch, context)
   logVersionInfo(sketch)
 
   var selectedPage = sketch.selectedDocument.selectedPage
+  
 
   selectedPage.iterate(function(layer) {
     if (layer.isArtboard) {
@@ -128,12 +165,12 @@ function onPreviewToggle(context) {
         PreviewHelper.removeGroupFromArtboard(layer)
         return
       }
-
+      
       PreviewHelper.removeGroupFromArtboard(layer)
-
-      var container = PreviewHelper.createGroupFromArtboard(layer)
       var path = LayerHelper.cleanName(layer.name)
       var textObjects = LayerHelper.findTextLayers(layer, path)
+      
+      var container = PreviewHelper.createGroupFromArtboard(layer)
       for (var i in textObjects) {
         PreviewHelper.highlightTextLayers(container, textObjects[i]['layer'])
       }
@@ -142,23 +179,36 @@ function onPreviewToggle(context) {
   });
 }
 
+
 var ExportHelper = {
   init(sketchAPI){
     this.sketchAPI = sketchAPI
   },
-
-  recurseArtboard: function(layer) {
-    var artboardCopy = []
-    artboardCopy["name"] = layer.name
-
-    var path = LayerHelper.cleanName(layer.name)
-    var textLayers = LayerHelper.findTextLayers(layer, path)
-
-    for (var i in textLayers.length) {
-      var thisTextHolder = textLayers[i]
-      var thisTextLayer = thisTextHolder['layer']
-      log(thisTextLayer.name)
-    }
+  
+  getPoHeader: function() {
+    return 'msgid ""\n' +
+    'msgstr ""\n' +
+    '"Project-Id-Version: CExample\\n"\n' +
+    '"Report-Msgid-Bugs-To: \\n"\n' +
+    '"POT-Creation-Date: 2016-12-12 11:29+0000\\n"\n' +
+    '"PO-Revision-Date: 2017-01-16 12:20+0000\\n"\n' +
+    '"Last-Translator: \\n"\n' +
+    '"Language-Team: \\n"\n' +
+    '"Language: en\\n"\n' +
+    '"MIME-Version: 1.0\\n"\n' +
+    '"Content-Type: text/plain; charset=UTF-8\\n"\n' +
+    '"Content-Transfer-Encoding: 8bit\\n"\n' +
+    '"Plural-Forms: nplurals=1; plural=0;\\n"\n' +
+    '"X-Generator: Weblate 2.9\\n"\n'
+    
+  },
+  
+  producePoFromat(path, layer) {
+    return `
+msgctxt "${path}"
+msgid "${layer.text}"
+msgstr "${layer.text}"
+`
   },
 
   p_exportImageWithDefaultOptions: function(artboardLayer) {
@@ -168,7 +218,7 @@ var ExportHelper = {
         scale: 1,
         suffix: "",
         format: "png",
-        path: NSHomeDirectory() + '/Desktop/AppScreenshots',
+        path: kImageFolder,
         name: artboardLayer.name
     });
   },
@@ -177,15 +227,14 @@ var ExportHelper = {
   exportArtboardImagesUsingMSAPI: function(document) {
     var page = [document currentPage]
     var artboards = [document artboards]
-
+    
     for (i = 0; i < artboards.length; i++) {
       var thisArtboard = artboards[i]
-      log(thisArtboard.name())
       this.exportImage(document, {
           suffix: "",
           format: "png",
           layer: thisArtboard,
-          path: NSHomeDirectory() + '/Desktop/AppScreenshots',
+          path: kImageFolder,
           scale: 2,
           name: thisArtboard.name()
       });
@@ -224,59 +273,71 @@ function onExportAllStrings(context) {
   var document = context.document
   var selectedPage = sketchAPI.selectedDocument.selectedPage
 
-  var stringsMissingKeysArray = []
-  var copyStore = []
-
   var artboardStore = []
+  
+  var rootName = selectedPage.name
+
+  var newCopy = ""
+  var existingPoFileContent = FileUtil.readTextFromFile(kPOFile)
+  var ammendedCopy = existingPoFileContent
+  
+  if (ammendedCopy == null) {
+    ammendedCopy = ExportHelper.getPoHeader()
+  }
+  
   selectedPage.iterate(function(layer) {
     if (layer.isArtboard) {
-      var artboardCopy = ExportHelper.recurseArtboard(layer)
+      var startMaker = `#: < -- ${layer.id} {`
+      var endMaker = `#: } ${layer.id} -- >`
+      var prefix = `${startMaker}\n#:   -- Artboard name: ${rootName} \n#:   -- Page name: ${layer.name} \n#:   -- Updated at: ` + new Date() + '#:   -- Generated by SketchLingo'
+      
+      
+      var textLayers = LayerHelper.findTextLayers(layer, rootName)
+      var overallContent = prefix + '\n'
+      
+      // If no text layers then return
+      if (textLayers.length == 0) {
+        return
+      }
+      
+      for (var i in textLayers) {
+        var thisTextHolder = textLayers[i]
+        var thisTextLayer = thisTextHolder['layer']
+        var thisTextPath = thisTextHolder['path']
+        var poContent = ExportHelper.producePoFromat(thisTextPath, thisTextLayer)
+        overallContent += poContent
+      }
+      
+      overallContent += '\n' + endMaker
+      
+      // Find Marker in and out points
+      var startMarkerPos = ammendedCopy ? ammendedCopy.indexOf(startMaker) : -1
+      var endMarkerPos = ammendedCopy ? ammendedCopy.indexOf(endMaker) : -1
+      
+      // If content already exists so replace
+      if (startMarkerPos > -1 && endMarkerPos > -1) {
+        
+        // A rather dirty find a replace
+        // TODO: Clean this dirt
+        var currentContent = ammendedCopy.substring(startMarkerPos) // find start position
+        var endContentMarkerPos = currentContent.indexOf(endMaker) // find length
+        currentContent = currentContent.substring(0, endContentMarkerPos) // take 0 to length content
+        ammendedCopy = ammendedCopy.replace(currentContent + endMaker, overallContent) // replace this content with out new content  
+      } else {
+        // Append copy on to the end
+        newCopy += '\n' + overallContent + '\n\n'     
+      }    
     }
   })
-
+  var allContent = ammendedCopy + newCopy
+  
+  FileUtil.writeTextToFile(allContent, kPOFile)
+  
+  Util.displayUserMessage("Exported strings")
+  
   ExportHelper.exportArtboardImagesUsingMSAPI(document)
-
-
-
-  // Otherwise notify user that strings were copied correctly
-
-
-  // Deal with new strings translations
-  // p_saveStringsToFile(copyStore)
-
-  // MARK:- Object Related functions
-  // function p_saveStringsToFile(thisStore) {
-  //   var contentForiOS = ""
-  //   var contentForAndroid = ""
-  //
-  //   for (i = 0; i < thisStore.length; i++) {
-  //     var artboardStore = thisStore[i]
-  //     contentForiOS += "\n/* - " + artboardStore["name"] + " - */\n"
-  //     contentForAndroid += "\n<!-- " + artboardStore["name"] + "-->\n"
-  //
-  //     for (j = 0; j < artboardStore["strings"].length; j++) {
-  //       var unitID = artboardStore["name"] + artboardStore["strings"][j]["id"]
-  //       var unitString = artboardStore["strings"][j]["string"]
-  //       var unitPrefix = artboardStore["strings"][j]["prefix"]
-  //       contentForiOS += appleLocalizationLine(unitPrefix + "." + unitID, unitString) + "\n"
-  //       contentForAndroid += androidLocalizationLine(unitPrefix + "." + unitID, unitString) + "\n"
-  //       LTLog(unitString)
-  //     }
-  //   }
-  //
-  //   // writeTextToFile(content, NSHomeDirectory() + '/Desktop/' + artboard.name() + '.txt')
-  //   writeTextToFile(contentForiOS, NSHomeDirectory() + '/Desktop/AppTranslations-iOS.localizable')
-  //   writeTextToFile(contentForAndroid, NSHomeDirectory() + '/Desktop/AppTranslations-Android.xml')
-  // }
-  //
-  // function appleLocalizationLine(id, content) {
-  //   return "\"" + id + "\"=\"" + content + "\""
-  // }
-  //
-  // function androidLocalizationLine(id, content) {
-  //   return "<string name=\"" + id + "\">" + content + "</string>"
-  // }
 };
+
 
 // MARK:- Utility Functions
 function prettifyStringsArray(unPrettyArray){
