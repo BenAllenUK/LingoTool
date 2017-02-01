@@ -38,14 +38,17 @@ Anyone can help make this project better - just make a pull request!
 
 ### 1. Exporting to PO file
 Use the menu option `Export all strings` (Plugins > LingoTool > Export all strings) or `Control` + `Shift` + `I` to export directly to a **.po** file. **Currently This file will appear in your desktop as `AppTranslations.po`**. In the same directory, a folder will contain screenshots of each screen which can be used as context.
+
 ![Export from sketch to .po files](export.gif)
 
 ### 2. Previewing Changes
 Use the menu option `Preview all strings` (Plugins > LingoTool > Preview all strings) or `Control` + `Shift` + `U` to preview which strings will be exported. This will allow you to check visually prior to exporting.
+
 ![Export from sketch to .po files](Preview-Mode.gif)
 
 ### 3. Ignoring Strings
 Prefix a layer name with a dash `-` to avoid exporting it. They will also not appear in preview mode.
+
 ![Export from sketch to .po files](disable-layer.gif)
 
 ## How it works
